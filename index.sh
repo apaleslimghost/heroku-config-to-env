@@ -7,7 +7,7 @@ mkdir -p "$(dirname "$OUT_FILE")"
 
 heroku config --app "$APP_NAME" |\
 		tail +2 |\
-		sed 's/: */=/g;  s/^/export /' |\
+		sed 's/: */=/;  s/^/export /' |\
 		cat <(echo '#!/bin/sh') - > "$OUT_FILE"
 
 chmod +x $OUT_FILE
