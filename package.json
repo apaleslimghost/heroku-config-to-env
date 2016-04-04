@@ -1,0 +1,21 @@
+{
+  "name": "@quarterto/heroku-config-to-env",
+  "version": "1.0.0",
+  "description": "Write a heroku app's config to an env.sh",
+  "bin": "index.sh",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quarterto/heroku-config-to-env.git"
+  },
+  "keywords": [
+    "heroku",
+    "config",
+    "env"
+  ],
+  "author": "Matt Brennan <matt@153.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/quarterto/heroku-config-to-env/issues"
+  },
+  "homepage": "https://github.com/quarterto/heroku-config-to-env#readme"
+}
