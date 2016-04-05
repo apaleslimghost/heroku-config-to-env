@@ -2,9 +2,10 @@
 
 ignore=("thisstringisnevergoingtoappearlolbutwedontwanttofilterouteverythingwhichiswhatanemptyarraywoulddo")
 
-while getopts ':i:' opt; do
+while getopts ':i:l:' opt; do
 		case $opt in
-				i) ignore+=("$OPTARG")
+				i) ignore+=("$OPTARG") ;;
+				l) localv+=("$OPTARG")
 		esac
 done
 
@@ -19,8 +20,10 @@ mkdir -p "$(dirname "$OUT_FILE")"
 
 heroku config --app "$APP_NAME" |\
 		tail +2 |\
-		sed 's/: */=/;  s/^/export /' |\
 		grep -vE "($(join '|' ${ignore[@]}))" |\
+		sed 's/: */=/' |\
+		cat - <(echo ${localv[@] | tr ' ' '\n'}) |\
+		sed 's/^/export /' |\
 		cat <(echo '#!/bin/sh') - > "$OUT_FILE"
 
 chmod +x $OUT_FILE
