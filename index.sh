@@ -55,11 +55,13 @@ heroku config --app "$APP_NAME" |\
 		# remove ignored vars
 		grep -vE "($(join '|' ${ignore[@]}))" |\
 		# convert to bashy format
-		sed 's/: *\(.*\)$/="\1"/' |\
+		sed 's/: */=/' |\
 		# add locally-set vars
 		cat - <(echo ${localv[@]} | tr ' ' '\n') |\
 		# remove empty lines
 		grep -v '^$' |\
+		# wrap value in quotes
+		sed 's/=\(.*\)$/="\1"/' |\
 		# prepend export
 		sed 's/^/export /' |\
 		# write the file with a shebang
