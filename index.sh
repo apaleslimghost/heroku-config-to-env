@@ -57,7 +57,7 @@ heroku config --app "$APP_NAME" |\
 		# convert to bashy format
 		sed 's/: *\(.*\)$/="\1"/' |\
 		# add locally-set vars
-		cat - <(echo ${localv[@])} | tr ' ' '\n') |\
+		cat - <(echo ${localv[@]} | tr ' ' '\n') |\
 		# remove empty lines
 		grep -v '^$' |\
 		# prepend export
