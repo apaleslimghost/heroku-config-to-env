@@ -52,7 +52,7 @@ if [ "$OUT_FILE" == "" ] || [ "$OUT_FILE" == "-" ] ; then
 fi
 
 # shouldn't export vars if it's a .env file
-if [ "$OUT_FILE" == *.env ]; then
+if [ "$OUT_FILE" == *.env ] || [ "$OUT_FILE" == ".env" ]; then
 	noexport=1
 fi
 
