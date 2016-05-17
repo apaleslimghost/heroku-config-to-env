@@ -14,19 +14,23 @@ Usage: $(basename $0) heroku-app-name [path/to/env.sh]
 path/to/env.sh is optional. if it's provided, the file will be written
 and made executable. if it's blank or '-', it's written to stdout.
 
+`export` is prepended to each line, unless -e is set or the path ends with .env
+
 Options:
 	-i PATTERN	ignore any config var matching PATTERN. can be used multiple times
-	-l VAR=val	add an entry setting VAR to val. use with -i to prevent duplicates
+	-l VAR=val	add an entry setting `VAR` to `val`. use with -i to prevent duplicates
+	-e		don't prepend `export` to each line
 	-h		show this help
 EOF
 
 	exit $([ "$1" == "" ] ; echo $?)
 }
 
-while getopts ':i:l:h' opt; do
+while getopts ':i:l:eh' opt; do
 		case $opt in
 				i) ignore+=("$OPTARG") ;;
 				l) localv+=("$OPTARG") ;;
+				e) noexport=1          ;;
 				h) usage ;;
 				?) usage "Unknown option $OPTARG"
 		esac
@@ -47,6 +51,11 @@ if [ "$OUT_FILE" == "" ] || [ "$OUT_FILE" == "-" ] ; then
 	OUT_FILE="/dev/stdout"
 fi
 
+# shouldn't export vars if it's a .env file
+if [ "$OUT_FILE" == *.env ]; then
+	noexport=1
+fi
+
 mkdir -p "$(dirname "$OUT_FILE")"
 
 heroku config --app "$APP_NAME" |\
@@ -62,8 +71,8 @@ heroku config --app "$APP_NAME" |\
 		grep -v '^$' |\
 		# wrap value in quotes
 		sed 's/=\(.*\)$/="\1"/' |\
-		# prepend export
-		sed 's/^/export /' |\
+		# prepend export (unless noexport is set)
+		([ "$noexport" == '1' ] && cat || sed 's/^/export /') |\
 		# write the file with a shebang
 		cat <(echo '#!/bin/sh') - > "$OUT_FILE"
 
