@@ -58,19 +58,15 @@ fi
 
 mkdir -p "$(dirname "$OUT_FILE")"
 
-heroku config --app "$APP_NAME" |\
+heroku config --shell --app "$APP_NAME" |\
 		# strip the heroku header
 		tail +2 |\
 		# remove ignored vars
 		grep -vE "($(join '|' ${ignore[@]}))" |\
-		# convert to bashy format
-		sed 's/: */=/' |\
 		# add locally-set vars
 		cat - <(echo ${localv[@]} | tr ' ' '\n') |\
 		# remove empty lines
 		grep -v '^$' |\
-		# wrap value in quotes
-		sed 's/=\(.*\)$/="\1"/' |\
 		# prepend export (unless noexport is set)
 		([ "$noexport" == '1' ] && cat || sed 's/^/export /') |\
 		# write the file with a shebang
